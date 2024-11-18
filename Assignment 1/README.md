@@ -1,4 +1,4 @@
-# Computer-Communication-and-Network
+# Socket Programming and Packet Analysis
 
 Here are my assignments for Computer Communication and Network course at EEPIS (Electronic Engineering Polytechnic Institute of Surabaya)
 
