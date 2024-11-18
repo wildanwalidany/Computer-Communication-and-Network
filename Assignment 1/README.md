@@ -6,6 +6,31 @@ In this assignment, an experiment was conducted to study the basic concepts of `
 
 The [server.c](./Scripts/server.c) and [client.c](./Scripts/client.c) programs demonstrate a simple client-server architecture implemented using socket programming in C. The server acts as a centralized communication hub, waiting for client connections and responding to their requests, while the client initiates a connection, sends messages, and receives responses. Both programs rely on the `TCP protocol`, ensuring reliable data transmission between the two endpoints.
 
+### 1.Sockets
+
+A **socket** is an endpoint for sending or receiving data across a network. Both the [server.c](./Scripts/server.c) and the [client.c](./Scripts/client.c) create sockets to establish a communication channel.
+
++ **Server Socket Creation:**
+
+``` c
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+};
+
+console.log(foo(5));
+```
+
++ `AF_INET`: Specifies IPv4.
++ `SOCK_STREAM`: Indicates a TCP connection,
+
++ **Client Socket Creation:**
+
+``` c
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+};
+
+console.log(foo(5));
+```
+
 ## Packet Analysis
 
 ## Resources
