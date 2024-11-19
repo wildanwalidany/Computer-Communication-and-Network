@@ -1,6 +1,5 @@
-# Computer-Communication-and-Network
+# Computer-Communication-and-Network(Wildan Dharma Walidaniy / 1224800002)
 
-**Wildan Dharma Walidaniy / 1224800002**
 Here are my assignments for Computer Communication and Network course at EEPIS (Electronic Engineering Polytechnic Institute of Surabaya)
 
 ## Table of Contents
