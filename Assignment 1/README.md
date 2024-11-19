@@ -254,6 +254,12 @@ For easier analysis, this is graphical representation of the TCP flow between th
 + The server responds with its own FIN, ACK (Seq=480 Ack=18306).
 + The final ACK packet from the client completes the connection closure.
 
+#### HTTP request and response
+
+![httpreqres](./Images/httpreqres.png)
+
+HTTP request and response captured in Wireshark, using the `"Follow HTTP Stream"` feature.
+
 ## Resources
 
 + [C Socket Programming: Simple Server and Client](<https://github.com/ferryastika/socket-programming-simple-server-and-client?tab=readme-ov-file>)
