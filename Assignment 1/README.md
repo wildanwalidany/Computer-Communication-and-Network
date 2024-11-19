@@ -105,10 +105,125 @@ The [MakeFile](./Scripts/Makefile) automates the compilation of the server.c and
 ![Server](./Images/server.png)
 ![Client](./Images/client.png)
 
-the connection between client and server is monitored and captured on loopback interface using wireshark and saved in [capture](./Captured_Packets/capture.pcapng) for further analysis below
+the connection between client and server is monitored and captured on loopback interface using wireshark and saved in [capture.pcapng](./Captured_Packets/capture.pcapng) for further analysis below.
 
 ## Packet Analysis
 
+### 1. Captured Packet from [server.c](./Scripts/server.c) and [client.c](./Scripts/client.c) Connection ([capture.pcapng](./Captured_Packets/capture.pcapng))
+
+#### Captured Packets
+
+![capture_home](./Images/capture_home.png)
+
+This the home page of wireshark. The image reveals information about a TCP session between a client and server running on localhost. The overview of the captured packet:
+
++ Source IP: `127.0.0.1` (localhost)
++ Destination IP: `127.0.0.1` (localhost)
++ Client Port: `51678` (ephemeral port assigned to the client).
++ Server Port: `5001` (defined in [server.c](./Scripts/server.c) as the listening port).
++ Protocol: TCP
++ Number of Packets: 14
+
+#### TCP flow diagram
+
+![tcp_flow](./Images/tcp_flow.png)
+
+##### 1. Connection Establishment
+
+The connection starts with the **three-way handshake**, which ensures a reliable connection setup.
+
++ **Packet 1 (SYN):**
+  + **Source:** `51678` → **Destination:** `5001`
+  + **Info:** `SYN, Seq=0`
+  + **Explanation:** The client initiates the TCP connection by sending a SYN (synchronize) packet to the server's port `5001`.
+
++ **Packet 2 (SYN-ACK):**
+  + Source:** `5001` → **Destination:** `51678`
+  + **Info:** `SYN, ACK, Seq=0, Ack=1`
+  + **Explanation:** The server acknowledges the client's SYN and sends its own SYN, confirming readiness to establish a connection.
+
++ **Packet 3 (ACK):**
+  + **Source:** `51678` → **Destination:** `5001`
+  + **Info:** `ACK, Seq=1, Ack=1`
+  + **Explanation:** The client acknowledges the server's SYN-ACK, completing the handshake.
+
+##### 2. Data Exchange
+
++ **Packet 4 (PSH, ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `PSH, ACK, Seq=1, Ack=1, Len=2`
+  + **Explanation:** The client sends the message `'A'` (2 bytes) to the server with the PSH (push) flag, signaling that the data should be delivered immediately.
+
++ **Packet 5 (CK):**
+  + Source: `5001` → Destination: `51678`
+  + **Info:** `ACK, Seq=1, Ack=3`
+  + **Explanation:** The server acknowledges receipt of the 2 bytes `'A'` from the client.
+
++ **Packet 6 (PSH, ACK):**
+  + Source: `5001` → Destination: `51678`
+  + **Info:** `PSH, ACK, Seq=1, Ack=3, Len=2`
+  + **Explanation:** The server sends the response `'A'` (2 bytes) back to the client with the PSH flag.
+
++ **Packet 7 (ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `ACK, Seq=3, Ack=3`
+  + **Explanation:** The client acknowledges receipt of the server's response `'A'`.
+
++ **Packet 8 (PSH, ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `PSH, ACK, Seq=3, Ack=3, Len=5`
+  + **Explanation:** The client sends the message `'quit'` (5 bytes) to the server.
+
++ **Packet 9 (ACK):**
+  + Source: `5001` → Destination: `51678`
+  + **Info:** `ACK, Seq=3, Ack=8`
+  + **Explanation:** The server acknowledges receipt of the `'quit'` message from the client.
+
++ **Packet 10 (PSH, ACK):**
+  + Source: `5001` → Destination: `51678`
+  + **Info:** `PSH, ACK, Seq=3, Ack=8, Len=5`
+  + **Explanation:** The server sends the response `'quit'` (5 bytes) back to the client with the PSH flag.
+
++ **Packet 11 (ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `ACK, Seq=8, Ack=8`
+  + **Explanation:** The client acknowledges receipt of the server's response `'quit'`.
+
+##### 3. Connection Termination
+
++ **Packet 12 (FIN, ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `FIN, ACK, Seq=8, Ack=8`
+  + **Explanation:** The client initiates connection termination by sending a FIN (finish) packet to the server.
+
++ **Packet 13 (ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `ACK, Seq=8, Ack=9`
+  + **Explanation:** The server acknowledges the client's FIN packet.
+
++ **Packet 14 (FIN, ACK):**
+  + Source: `5001` → Destination: `51678`
+  + **Info:** `FIN, ACK, Seq=8, Ack=9`
+  + **Explanation:** The server also sends a FIN to close its side of the connection.
+
++ **Packet 15 (ACK):**
+  + Source: `51678` → Destination: `5001`
+  + **Info:** `ACK, Seq=9, Ack=9`
+  + **Explanation:** The client acknowledges the server's FIN.
+
+### 2. Captured [http.cap](./Captured_Packets/http.cap) Packet obtained from [Wireshark Sample Captures](https://wiki.wireshark.org/samplecaptures#hypertext-transport-protocol-http)
+
+#### Initial captured packets
+
+![http_home](./Images/http_home.png)
+this is inital Wireshark capture file [http.cap](./Captured_Packets/http.cap) showing network traffic with various protocols, mainly TCP, DNS, and HTTP.
+
+#### TCP filtered
+
+![tcpstreamfilter](./Images/tcpstreamfilter.png)
+The `tcp.stream eq 0` filter isolates and displays packets that belong to the first TCP stream (stream 0), allowing us to analyze a single TCP connection more closely
+
+#### TCP Flow
 
 
 ## Resources
