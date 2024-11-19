@@ -1,7 +1,6 @@
 # Socket Programming and Packet Analysis
 
-Wildan Dharma Walidaniy / 1224800002
-
+**Wildan Dharma Walidaniy / 1224800002**
 In this assignment, an experiment was conducted to study the basic concepts of `Socket Programming`using a communication channel between the client and server using the TCP protocol and `Packet Analysis` performed with Wireshark.
 
 ## Socket Programming
