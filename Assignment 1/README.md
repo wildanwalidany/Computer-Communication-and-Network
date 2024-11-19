@@ -216,7 +216,7 @@ The connection starts with the **three-way handshake**, which ensures a reliable
 #### Initial captured packets
 
 ![http_home](./Images/http_home.png)
-this is inital Wireshark capture file [http.cap](./Captured_Packets/http.cap) showing network traffic with various protocols, mainly TCP, DNS, and HTTP.
+This is inital Wireshark capture file [http.cap](./Captured_Packets/http.cap) showing network traffic with various protocols, mainly TCP, DNS, and HTTP.
 
 #### TCP filtered
 
@@ -225,6 +225,34 @@ The `tcp.stream eq 0` filter isolates and displays packets that belong to the fi
 
 #### TCP Flow
 
+![tcp_flow2](./Images/tcp_flow2.png)
+For easier analysis, this is graphical representation of the TCP flow between the client (`145.254.160.237:3372`) and the server (`65.208.228.223:80`). This view summarizes the sequence numbers, acknowledgments, and packet lengths for stream `tcp.stream eq 0`
+
+##### 1. TCP Handshake
+
++ The first three packets (`SYN, SYN, ACK, ACK`) represent the 3-way handshake:
+  + `Seq=0` (client) → SYN
+  + `Seq=0 Ack=1` (server) → SYN, ACK
+  + `Seq=1 Ack=1` (client) → ACK
+
+##### 2. Data Transfer
+
++ After the handshake, data packets are sent using the `PSH, ACK` flags, indicating that the data should be pushed to the receiving application immediately.
++ The initial data packet (`Seq=1 Ack=1, length 479`) is the client's HTTP request (`GET /download.html`).
++ Subsequent packets are mostly from the server sending data back to the client:
+  + **Lengths of 1380 bytes** indicate the server is sending chunks of data, likely the response to the HTTP GET request.
+  + The client acknowledges each segment received (`ACK` packets) to maintain flow control.
+
+##### 3. Data Acknowledgment
+
++ The sequence numbers on the server’s side increase by the lengths of the data sent (mostly 1380 bytes).
++ The client's acknowledgments (`Ack=480, Ack=18305`, etc.) confirm the cumulative data received.
+
+##### 4. Connection Termination
+
++ Packet with FIN, ACK from the client (Seq=18305 Ack=480) initiates the connection termination.
++ The server responds with its own FIN, ACK (Seq=480 Ack=18306).
++ The final ACK packet from the client completes the connection closure.
 
 ## Resources
 
