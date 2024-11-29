@@ -185,6 +185,7 @@ SMTP is a **store-and-forward protocol**, meaning email is transmitted through a
 ### **SMTP Session Example**
 
 ![smtpflow](./Images/smtpflow.png)
+
 This SMTP session demonstrates the process of sending an email from a client to a server. The connection starts with the SMTP server (`xc90.websitewelcome.com`) identifying itself and warning against the use of its system for unsolicited or bulk email. The client introduces itself with the `EHLO GP` command, and the server responds, listing supported features such as message size limit (50 MB), pipelining, authentication methods (`AUTH PLAIN LOGIN`), and secure connections (`STARTTLS`). The client then authenticates using the `AUTH LOGIN` method, providing the username (`gurpartap@patriots.in`) and password (`punjab@123`) in Base64 format, and the server confirms authentication with a success message. Next, the sender's address is defined with `MAIL FROM: <gurpartap@patriots.in>`, and the recipient's address is specified with `RCPT TO: <raj_deol2002in@yahoo.co.in>`, both of which are accepted by the server. The client begins the email content with the `DATA` command, and the server prompts the client to enter the message, ending with a period (`.`) on a line by itself. The email message includes the sender’s and recipient’s addresses and is finalized with the ending period. The server then accepts the message for delivery, successfully completing the SMTP session.
 
 ---
