@@ -5,3 +5,4 @@ Here are my assignments for Computer Communication and Network course at EEPIS (
 ## Table of Contents
 
 - [Assignment 1](./Assignment%201/): Socket Programming and Packet Analysis
+- [Assignment 2](./Assignment%202/Assignment 2): HTTP protocol
