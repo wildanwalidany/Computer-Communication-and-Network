@@ -98,6 +98,11 @@ DNS messages consist of two types: **queries** and **responses**, both sharing a
 
 ---
 
+### **DNS Packet Example**
+
+![dnsquery](./Images/dnsquery.png)
+This DNS packet is a **standard query** from a client at IP `192.168.170.8` to a DNS server at IP `192.168.170.20`. It is requesting the **TXT record** for the domain name `google.com` using recursive resolution with the transaction ID `0x1032` ensuring the client can match the response to this specific query.
+
 ### **Advanced DNS Features**
 
 1. **DNS Caching**:
