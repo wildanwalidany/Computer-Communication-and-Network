@@ -28,3 +28,225 @@ This web server is configured to use `HTTP/2`, as indicated in the response head
 The `curl` command confirms that the web server is running **HTTP/2** as indicated in the response status line (`HTTP/2 200`). The server is identified as `nginx/1.27.3`.
 
 ![wireshark2](./Images/wireshark2.png)
+
+# 2. DNS Protocol
+
+The **Domain Name System (DNS)** protocol is a foundational part of the Internet, enabling users to access websites and services by translating human-readable domain names (e.g., `example.com`) into IP addresses (e.g., `192.168.1.1`) that computers use to identify each other on the network.
+
+---
+
+### **How DNS Works**
+DNS operates on a **client-server model** using a hierarchical structure. Here's the step-by-step process of a DNS query:
+
+1. **User Request**:
+   - A user enters a domain name (e.g., `example.com`) in a browser or application.
+   
+2. **Local DNS Resolver**:
+   - The user's device sends a DNS query to a **local resolver** (usually provided by the ISP or configured manually, e.g., Google's `8.8.8.8`).
+
+3. **Recursive Resolution**:
+   If the resolver doesn’t have the domain information cached, it performs a series of recursive queries:
+   - **Root Server**: The resolver first contacts a root DNS server (e.g., `.`). These servers provide pointers to **Top-Level Domain (TLD)** servers.
+   - **TLD Server**: For example, if the query is for `example.com`, the `.com` TLD server is queried. It responds with the authoritative name server for the domain.
+   - **Authoritative Name Server**: Finally, the resolver queries the authoritative name server for the domain, which returns the IP address for `example.com`.
+
+4. **Response to Client**:
+   - The resolver sends the IP address back to the user's device.
+   - The user's browser or application uses the IP address to establish a connection with the web server.
+
+---
+
+### **DNS Protocol Details**
+
+- **Transport Protocol**: DNS typically uses:
+  - **UDP (User Datagram Protocol)** on port **53** for most queries.
+  - **TCP (Transmission Control Protocol)** on port **53** for larger responses or zone transfers.
+
+- **Query Types**:
+  DNS queries can request different types of records, such as:
+  - **A Record**: IPv4 address of the domain.
+  - **AAAA Record**: IPv6 address of the domain.
+  - **CNAME Record**: Canonical name for domain aliases.
+  - **MX Record**: Mail server for the domain.
+  - **NS Record**: Name servers for the domain.
+  - **TXT Record**: Miscellaneous text data.
+  - **SOA Record**: Start of Authority, metadata for the domain.
+
+- **DNS Query Modes**:
+  - **Recursive Query**: The resolver handles all steps and returns the final result to the client.
+  - **Iterative Query**: The resolver queries each DNS server step-by-step, returning what it knows at each stage.
+
+---
+
+### **DNS Packet Structure**
+DNS messages consist of two types: **queries** and **responses**, both sharing a similar structure:
+
+1. **Header**:
+   - Includes transaction ID, flags (e.g., recursion desired), and question/answer counts.
+
+2. **Question Section**:
+   - Contains the domain name being queried and the query type (e.g., A, AAAA).
+
+3. **Answer Section**:
+   - Contains resource records (e.g., the IP address) if available.
+
+4. **Authority Section**:
+   - Points to authoritative name servers.
+
+5. **Additional Section**:
+   - Provides extra information, such as the IP of the authoritative name server.
+
+---
+
+### **Advanced DNS Features**
+
+1. **DNS Caching**:
+   - To improve performance, DNS resolvers and clients cache responses for a certain period, defined by the **Time-To-Live (TTL)** value.
+
+2. **DNS over HTTPS (DoH)**:
+   - Encrypts DNS queries over HTTPS, improving privacy by preventing eavesdropping.
+
+3. **DNS over TLS (DoT)**:
+   - Similar to DoH but uses TLS for encryption.
+
+4. **Dynamic DNS (DDNS)**:
+   - Allows automatic updates of DNS records, often used for devices with dynamic IPs.
+
+5. **Reverse DNS**:
+   - Maps an IP address back to a domain name, typically using a **PTR record**.
+
+---
+
+### **Common DNS Issues**
+- **DNS Spoofing/Poisoning**:
+  Attackers provide fake DNS responses to redirect users to malicious sites.
+  
+- **DNS Server Unreachable**:
+  Indicates network issues or misconfigured DNS settings.
+  
+- **High Latency**:
+  Can occur due to slow recursive resolution or lack of caching.
+
+---
+
+### **Why DNS Matters**
+Without DNS, users would need to memorize IP addresses for every website or service they use. The protocol abstracts this complexity, making the Internet user-friendly and scalable.
+
+# 3. SMTP Protocol
+
+The **Simple Mail Transfer Protocol (SMTP)** is a communication protocol used to send, relay, and deliver emails across the Internet. It operates primarily between mail servers and client applications to ensure the efficient transfer of email messages.
+
+---
+
+### **How SMTP Works**
+
+SMTP is a **store-and-forward protocol**, meaning email is transmitted through a series of intermediate servers before reaching its destination. Here's an overview of the process:
+
+#### 1. **Sending Email**
+   - A user composes an email in their client application (e.g., Outlook, Thunderbird).
+   - The client connects to the sender's SMTP server to transfer the email.
+
+#### 2. **Server-to-Server Transmission**
+   - The sender's SMTP server looks up the recipient's mail server using **DNS MX (Mail Exchange)** records.
+   - The sender's SMTP server establishes a connection with the recipient's SMTP server to deliver the message.
+
+#### 3. **Final Delivery**
+   - The recipient's SMTP server passes the email to a **Mail Delivery Agent (MDA)**, such as an IMAP or POP server.
+   - The email is stored on the recipient's mail server until retrieved by the recipient's client.
+
+---
+
+### **SMTP Protocol Details**
+
+- **Transport Protocol**:
+  - SMTP operates over **TCP** to ensure reliable delivery.
+  - The default port numbers:
+    - **25**: Default SMTP port for server-to-server email relay (sometimes blocked for security reasons).
+    - **587**: Secure submission of emails from client to server (preferred for outgoing mail).
+    - **465**: SMTP over SSL (deprecated but still used by some providers).
+
+- **Commands**:
+  SMTP communication consists of a series of commands and responses. Key commands include:
+  - **HELO/EHLO**: Identifies the client to the server (EHLO includes support for extensions).
+  - **MAIL FROM**: Specifies the sender's email address.
+  - **RCPT TO**: Specifies the recipient's email address.
+  - **DATA**: Indicates the start of the email message body and headers.
+  - **QUIT**: Ends the SMTP session.
+  - **RSET**: Resets the session.
+  - **AUTH**: Used to authenticate a client (if required).
+
+---
+
+### **SMTP Session Workflow**
+
+1. **Establishing Connection**:
+   - The client establishes a TCP connection with the SMTP server.
+
+2. **Handshake**:
+   - The client identifies itself with `HELO` or `EHLO`, and the server responds with a status code.
+
+3. **Message Transfer**:
+   - The client specifies the sender (`MAIL FROM`) and recipient (`RCPT TO`).
+   - The client sends the email content using the `DATA` command.
+
+4. **Server Response**:
+   - The server acknowledges the successful receipt of the message.
+
+5. **Session Termination**:
+   - The client closes the connection with the `QUIT` command.
+
+---
+
+### **SMTP Commands and Status Codes**
+
+#### **Key Commands**
+| Command    | Description                                |
+|------------|--------------------------------------------|
+| `HELO`     | Identifies the client to the server.       |
+| `EHLO`     | Extended version of HELO for modern SMTP. |
+| `MAIL FROM`| Specifies the sender’s address.            |
+| `RCPT TO`  | Specifies the recipient’s address.         |
+| `DATA`     | Indicates the start of the message body.   |
+| `RSET`     | Resets the current session.                |
+| `QUIT`     | Ends the session.                         |
+| `AUTH`     | Initiates client authentication.           |
+
+#### **Common Status Codes**
+| Code | Meaning                                      |
+|------|----------------------------------------------|
+| 220  | Server ready to start a session.             |
+| 250  | Requested action completed successfully.     |
+| 354  | Start email input (after `DATA` command).    |
+| 421  | Service not available (temporary issue).     |
+| 450  | Action not taken (e.g., mailbox unavailable).|
+| 550  | Requested action failed (e.g., mailbox full).|
+
+---
+
+### **SMTP Security Extensions**
+
+SMTP was designed without encryption, but modern enhancements address security concerns:
+
+1. **STARTTLS**:
+   - Upgrades the connection to use TLS encryption.
+   - Prevents plaintext email content from being intercepted.
+
+2. **SMTP AUTH**:
+   - Requires users to authenticate before sending email, reducing spam and unauthorized use.
+
+3. **SPF, DKIM, and DMARC**:
+   - Authentication mechanisms to prevent email spoofing and phishing.
+
+4. **SSL/TLS (Port 465)**:
+   - Uses encrypted communication from the start of the connection.
+
+---
+
+### **SMTP vs Other Email Protocols**
+| Protocol | Purpose                              | Example Ports |
+|----------|--------------------------------------|---------------|
+| **SMTP** | Sending and relaying emails.         | 25, 587, 465  |
+| **IMAP** | Retrieving emails (with server sync).| 143, 993      |
+| **POP3** | Downloading emails (local storage).  | 110, 995      |
+
+---
