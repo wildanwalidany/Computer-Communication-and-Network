@@ -1,265 +1,112 @@
-# 1. HTTP Protocol Differences
+# Wildan Dharma Walidaniy
 
-`HTTP/1.1` and `HTTP/2.0` are versions of the Hypertext Transfer Protocol, the foundation of data communication on the web. Below is a comparison of key differences:
+## Student ID: 1224800002  
 
-## HTTP/1.1 Server
-
-In this part, the `HTTP/1.1` web server is deployed using Docker.
-![dockerps1](./Images/dockerps1.png)
-
-![browser1](./Images/browser1.png)
-This web server is configured to use **HTTP/1.1**, as indicated in the response headers where the `Version` is explicitly stated as `HTTP/1.1`. The response status is `304 Not Modified`, meaning the requested resource has not changed since the last access, so no content was sent in the body. The server is running on `nginx/1.27.3`, a modern version of NGINX that supports HTTP/1.1.
-
-![curl1](./Images/curl1.png)
-The `curl` command confirms that the web server is running **HTTP/1.1** as indicated in the response status line (`HTTP/1.1 200 OK`). The server is identified as `nginx/1.27.3`.
-
-![wireshark1](./Images/wireshark1.png)
-This wireshark capture shows that HTTP/1.1 is used, as indicated by the `GET / HTTP/1.1` request from the client and the `HTTP/1.1 304 Not Modified` response from the server.
-
-## HTTP/2 Server
-
-In this part, the `HTTP/2.0` web server is deployed using Docker.
-![dockerps1](./Images/dockerps2.png)
-
-![browser2](./Images/browser2.png)
-This web server is configured to use `HTTP/2`, as indicated in the response headers where the Version is explicitly stated as `HTTP/2`. The request was made over a secure connection (`https://localhost:8443/`), which is typical for HTTP/2 since it usually operates over HTTPS. The server runs on nginx/1.27.3, a version that supports `HTTP/2` functionality. The response demonstrates the server's correct operation under `HTTP/2`, returning a `200 OK` status.
-
-![curl2](./Images/curl2.png)
-The `curl` command confirms that the web server is running **HTTP/2** as indicated in the response status line (`HTTP/2 200`). The server is identified as `nginx/1.27.3`.
-
-![wireshark2](./Images/wireshark2.png)
-
-# 2. DNS Protocol
-
-The **Domain Name System (DNS)** protocol is a foundational part of the Internet, enabling users to access websites and services by translating human-readable domain names (e.g., `example.com`) into IP addresses (e.g., `192.168.1.1`) that computers use to identify each other on the network.
+### Program: S2 IT  
 
 ---
 
-### **How DNS Works**
-DNS operates on a **client-server model** using a hierarchical structure. Here's the step-by-step process of a DNS query:
+## UAS Komunikasi dan Jaringan Komputer  
 
-1. **User Request**:
-   - A user enters a domain name (e.g., `example.com`) in a browser or application.
-   
-2. **Local DNS Resolver**:
-   - The user's device sends a DNS query to a **local resolver** (usually provided by the ISP or configured manually, e.g., Google's `8.8.8.8`).
+### Source
 
-3. **Recursive Resolution**:
-   If the resolver doesn’t have the domain information cached, it performs a series of recursive queries:
-   - **Root Server**: The resolver first contacts a root DNS server (e.g., `.`). These servers provide pointers to **Top-Level Domain (TLD)** servers.
-   - **TLD Server**: For example, if the query is for `example.com`, the `.com` TLD server is queried. It responds with the authoritative name server for the domain.
-   - **Authoritative Name Server**: Finally, the resolver queries the authoritative name server for the domain, which returns the IP address for `example.com`.
-
-4. **Response to Client**:
-   - The resolver sends the IP address back to the user's device.
-   - The user's browser or application uses the IP address to establish a connection with the web server.
+The trace file for this test (`tcp-ethereal-trace-1`) was obtained from [Wireshark Labs](http://gaia.cs.umass.edu/wireshark-labs/wireshark-traces.zip).
 
 ---
 
-### **DNS Protocol Details**
+### Questions for the TCP Segments
 
-- **Transport Protocol**: DNS typically uses:
-  - **UDP (User Datagram Protocol)** on port **53** for most queries.
-  - **TCP (Transmission Control Protocol)** on port **53** for larger responses or zone transfers.
-
-- **Query Types**:
-  DNS queries can request different types of records, such as:
-  - **A Record**: IPv4 address of the domain.
-  - **AAAA Record**: IPv6 address of the domain.
-  - **CNAME Record**: Canonical name for domain aliases.
-  - **MX Record**: Mail server for the domain.
-  - **NS Record**: Name servers for the domain.
-  - **TXT Record**: Miscellaneous text data.
-  - **SOA Record**: Start of Authority, metadata for the domain.
-
-- **DNS Query Modes**:
-  - **Recursive Query**: The resolver handles all steps and returns the final result to the client.
-  - **Iterative Query**: The resolver queries each DNS server step-by-step, returning what it knows at each stage.
+1. **What is the IP address and TCP port number used by your client computer (source) to transfer the file to `gaia.cs.umass.edu`? (10%)**  
+   - To identify the correct packet transferring a file to `gaia.cs.umass.edu`, the display filter `http.host == "gaia.cs.umass.edu"` was applied.  
+   - Examining the filtered packets for HTTP POST requests reveals that **packet number 199** transfers the file.  
+   ![1](./Images/1.png)
+   - **Client computer (source):**  
+     - IP address: `192.168.1.102`  
+     - TCP port number: `1161`  
 
 ---
 
-### **DNS Packet Structure**
-DNS messages consist of two types: **queries** and **responses**, both sharing a similar structure:
-
-1. **Header**:
-   - Includes transaction ID, flags (e.g., recursion desired), and question/answer counts.
-
-2. **Question Section**:
-   - Contains the domain name being queried and the query type (e.g., A, AAAA).
-
-3. **Answer Section**:
-   - Contains resource records (e.g., the IP address) if available.
-
-4. **Authority Section**:
-   - Points to authoritative name servers.
-
-5. **Additional Section**:
-   - Provides extra information, such as the IP of the authoritative name server.
+2. **What does `gaia.cs.umass.edu` use as the IP address and port number to receive the file? (Attach the screenshot of your Wireshark's display) (10%)**
+   ![2](./Images/2.png)  
+   - Destination information can be found in **packet number 199**:  
+     - **Destination computer:** `gaia.cs.umass.edu`  
+     - IP address: `128.119.245.12`  
+     - TCP port number: `80`  
 
 ---
 
-### **DNS Packet Example**
-
-![dnsquery](./Images/dnsquery.png)
-This DNS packet is a **standard query** from a client at IP `192.168.170.8` to a DNS server at IP `192.168.170.20`. It is requesting the **TXT record** for the domain name `google.com` using recursive resolution with the transaction ID `0x1032` ensuring the client can match the response to this specific query.
-
-### **Advanced DNS Features**
-
-1. **DNS Caching**:
-   - To improve performance, DNS resolvers and clients cache responses for a certain period, defined by the **Time-To-Live (TTL)** value.
-
-2. **DNS over HTTPS (DoH)**:
-   - Encrypts DNS queries over HTTPS, improving privacy by preventing eavesdropping.
-
-3. **DNS over TLS (DoT)**:
-   - Similar to DoH but uses TLS for encryption.
-
-4. **Dynamic DNS (DDNS)**:
-   - Allows automatic updates of DNS records, often used for devices with dynamic IPs.
-
-5. **Reverse DNS**:
-   - Maps an IP address back to a domain name, typically using a **PTR record**.
+3. **What is the sequence number of the TCP SYN segment that is used to initiate the TCP connection? What identifies the segment as a SYN segment? (Attach the screenshot of your Wireshark's display) (10%)**  
+   ![3](./Images/3.png)
+   - **Sequence number:** `0`  
+   - The SYN flag is set to `1`, identifying it as a SYN segment.  
 
 ---
 
-### **Common DNS Issues**
-- **DNS Spoofing/Poisoning**:
-  Attackers provide fake DNS responses to redirect users to malicious sites.
-  
-- **DNS Server Unreachable**:
-  Indicates network issues or misconfigured DNS settings.
-  
-- **High Latency**:
-  Can occur due to slow recursive resolution or lack of caching.
+4. **What is the sequence number of the SYNACK segment sent by `gaia.cs.umass.edu` in reply to the SYN? What is the value of the ACK field? How is this value determined? (Attach the screenshot of your Wireshark's display) (10%)**  
+   ![4](./Images/4.png)
+   - **Sequence number:** `0`  
+   - **ACK field value:** `1`  
+   - The server (`gaia.cs.umass.edu`) calculates this value by adding `1` to the initial sequence number from the client.  
 
 ---
 
-### **Why DNS Matters**
-Without DNS, users would need to memorize IP addresses for every website or service they use. The protocol abstracts this complexity, making the Internet user-friendly and scalable.
-
-# 3. SMTP Protocol
-
-The **Simple Mail Transfer Protocol (SMTP)** is a communication protocol used to send, relay, and deliver emails across the Internet. It operates primarily between mail servers and client applications to ensure the efficient transfer of email messages.
+5. **What is the sequence number of the TCP segment containing the HTTP POST command? (Attach the screenshot of your Wireshark's display) (15%)**
+   ![5](./Images/5.png)  
+   - The sequence number of the HTTP POST command (segment No. 4): `1`.  
 
 ---
 
-### **How SMTP Works**
+6. **Sequence numbers and RTT details of the first six TCP segments (including the HTTP POST): (30%)**
+   ![6a](./Images/6a.png)
+   *Segments 1 – 6*
+   ![6b](./Images/6b.png)
+   *ACKs of segments 1 - 6*
 
-SMTP is a **store-and-forward protocol**, meaning email is transmitted through a series of intermediate servers before reaching its destination. Here's an overview of the process:
+   **Segments and ACKs:**  
+   - HTTP POST segment is considered as Segment 1.  
+   - Segments: 4, 5, 7, 8, 10, and 11  
+   - ACKs: 6, 9, 12, 14, 15, and 16  
 
-#### 1. **Sending Email**
-   - A user composes an email in their client application (e.g., Outlook, Thunderbird).
-   - The client connects to the sender's SMTP server to transfer the email.
+   **Sequence Numbers:**  
+   - Segment 1: `1`  
+   - Segment 2: `566`  
+   - Segment 3: `2026`  
+   - Segment 4: `3486`  
+   - Segment 5: `4946`  
+   - Segment 6: `6406`  
 
-#### 2. **Server-to-Server Transmission**
-   - The sender's SMTP server looks up the recipient's mail server using **DNS MX (Mail Exchange)** records.
-   - The sender's SMTP server establishes a connection with the recipient's SMTP server to deliver the message.
+   **RTT Table:**  
 
-#### 3. **Final Delivery**
-   - The recipient's SMTP server passes the email to a **Mail Delivery Agent (MDA)**, such as an IMAP or POP server.
-   - The email is stored on the recipient's mail server until retrieved by the recipient's client.
+   | Segment | Sent Time (s) | ACK Received Time (s) | RTT (s) |
+   |---------|---------------|-----------------------|---------|
+   | 1       | 0.026477      | 0.053937             | 0.02746 |
+   | 2       | 0.041737      | 0.077294             | 0.035557 |
+   | 3       | 0.054026      | 0.124085             | 0.070059 |
+   | 4       | 0.054690      | 0.169118             | 0.11443  |
+   | 5       | 0.077405      | 0.217299             | 0.13989  |
+   | 6       | 0.078157      | 0.267802             | 0.18964  |
 
----
+   **EstimatedRTT Calculation:**  
+   - `EstimatedRTT = 0.875 * Previous EstimatedRTT + 0.125 * SampleRTT`  
 
-### **SMTP Protocol Details**
+   **Values:**  
+   - After Segment 1 ACK: `0.02746`  
+   - After Segment 2 ACK: `0.0285`  
+   - After Segment 3 ACK: `0.0337`  
+   - After Segment 4 ACK: `0.0438`  
+   - After Segment 5 ACK: `0.0558`  
+   - After Segment 6 ACK: `0.0725`  
 
-- **Transport Protocol**:
-  - SMTP operates over **TCP** to ensure reliable delivery.
-  - The default port numbers:
-    - **25**: Default SMTP port for server-to-server email relay (sometimes blocked for security reasons).
-    - **587**: Secure submission of emails from client to server (preferred for outgoing mail).
-    - **465**: SMTP over SSL (deprecated but still used by some providers).
-
-- **Commands**:
-  SMTP communication consists of a series of commands and responses. Key commands include:
-  - **HELO/EHLO**: Identifies the client to the server (EHLO includes support for extensions).
-  - **MAIL FROM**: Specifies the sender's email address.
-  - **RCPT TO**: Specifies the recipient's email address.
-  - **DATA**: Indicates the start of the email message body and headers.
-  - **QUIT**: Ends the SMTP session.
-  - **RSET**: Resets the session.
-  - **AUTH**: Used to authenticate a client (if required).
-
----
-
-### **SMTP Session Example**
-
-![smtpflow](./Images/smtpflow.png)
-
-This SMTP session demonstrates the process of sending an email from a client to a server. The connection starts with the SMTP server (`xc90.websitewelcome.com`) identifying itself and warning against the use of its system for unsolicited or bulk email. The client introduces itself with the `EHLO GP` command, and the server responds, listing supported features such as message size limit (50 MB), pipelining, authentication methods (`AUTH PLAIN LOGIN`), and secure connections (`STARTTLS`). The client then authenticates using the `AUTH LOGIN` method, providing the username (`gurpartap@patriots.in`) and password (`punjab@123`) in Base64 format, and the server confirms authentication with a success message. Next, the sender's address is defined with `MAIL FROM: <gurpartap@patriots.in>`, and the recipient's address is specified with `RCPT TO: <raj_deol2002in@yahoo.co.in>`, both of which are accepted by the server. The client begins the email content with the `DATA` command, and the server prompts the client to enter the message, ending with a period (`.`) on a line by itself. The email message includes the sender’s and recipient’s addresses and is finalized with the ending period. The server then accepts the message for delivery, successfully completing the SMTP session.
-
----
-
-### **SMTP Session Workflow**
-
-1. **Establishing Connection**:
-   - The client establishes a TCP connection with the SMTP server.
-
-2. **Handshake**:
-   - The client identifies itself with `HELO` or `EHLO`, and the server responds with a status code.
-
-3. **Message Transfer**:
-   - The client specifies the sender (`MAIL FROM`) and recipient (`RCPT TO`).
-   - The client sends the email content using the `DATA` command.
-
-4. **Server Response**:
-   - The server acknowledges the successful receipt of the message.
-
-5. **Session Termination**:
-   - The client closes the connection with the `QUIT` command.
+   ![6c](./Images/6c.png)
+   *Round Trip Time Graph*
 
 ---
 
-### **SMTP Commands and Status Codes**
+7. **What is the length of each of the first six TCP segments? (Attach the screenshot of your Wireshark's display) (15%)**
+   ![7a](./Images/7a.png)
+   *first TCP segment*
+   ![7b](./Images/7b.png)
+   *2nd-6th segment has the same size*
 
-#### **Key Commands**
-| Command    | Description                                |
-|------------|--------------------------------------------|
-| `HELO`     | Identifies the client to the server.       |
-| `EHLO`     | Extended version of HELO for modern SMTP. |
-| `MAIL FROM`| Specifies the sender’s address.            |
-| `RCPT TO`  | Specifies the recipient’s address.         |
-| `DATA`     | Indicates the start of the message body.   |
-| `RSET`     | Resets the current session.                |
-| `QUIT`     | Ends the session.                         |
-| `AUTH`     | Initiates client authentication.           |
-
-#### **Common Status Codes**
-| Code | Meaning                                      |
-|------|----------------------------------------------|
-| 220  | Server ready to start a session.             |
-| 250  | Requested action completed successfully.     |
-| 354  | Start email input (after `DATA` command).    |
-| 421  | Service not available (temporary issue).     |
-| 450  | Action not taken (e.g., mailbox unavailable).|
-| 550  | Requested action failed (e.g., mailbox full).|
-
----
-
-### **SMTP Security Extensions**
-
-SMTP was designed without encryption, but modern enhancements address security concerns:
-
-1. **STARTTLS**:
-   - Upgrades the connection to use TLS encryption.
-   - Prevents plaintext email content from being intercepted.
-
-2. **SMTP AUTH**:
-   - Requires users to authenticate before sending email, reducing spam and unauthorized use.
-
-3. **SPF, DKIM, and DMARC**:
-   - Authentication mechanisms to prevent email spoofing and phishing.
-
-4. **SSL/TLS (Port 465)**:
-   - Uses encrypted communication from the start of the connection.
-
----
-
-### **SMTP vs Other Email Protocols**
-| Protocol | Purpose                              | Example Ports |
-|----------|--------------------------------------|---------------|
-| **SMTP** | Sending and relaying emails.         | 25, 587, 465  |
-| **IMAP** | Retrieving emails (with server sync).| 143, 993      |
-| **POP3** | Downloading emails (local storage).  | 110, 995      |
-
----
+   - Length of the first TCP segment (HTTP POST): `565 bytes`  
+   - Length of each of the other five segments: `1460 bytes` (Maximum Segment Size).  
