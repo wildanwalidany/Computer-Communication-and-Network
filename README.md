@@ -7,3 +7,7 @@ Here are my assignments for Computer Communication and Network course at EEPIS (
 - [Assignment 1](./Assignment%201/): Socket Programming and Packet Analysis
 - [Assignment 2](./Assignment%202): HTTP, DNS, and SMTP Protocol
 - [UAS](./UAS): UAS Komunikasi dan Jaringan Komputer
+
+## Credit
+
+This project is based on resources from my lecturer [ferryastika](https://github.com/ferryastika)
