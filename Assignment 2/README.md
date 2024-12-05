@@ -36,23 +36,32 @@ The **Domain Name System (DNS)** protocol is a foundational part of the Internet
 ---
 
 ### **How DNS Works**
-DNS operates on a **client-server model** using a hierarchical structure. Here's the step-by-step process of a DNS query:
+![dnsflow](./Images/dnsflow.png)
+This flow represents how the DNS (Domain Name System) resolution process works when a user computer requests the IP address for a domain name, like "www.example.com." Here's an explanation of each step:
 
-1. **User Request**:
-   - A user enters a domain name (e.g., `example.com`) in a browser or application.
-   
-2. **Local DNS Resolver**:
-   - The user's device sends a DNS query to a **local resolver** (usually provided by the ISP or configured manually, e.g., Google's `8.8.8.8`).
+1. **User Computer to ISP's Recursive DNS Server**  
+   The user computer sends a DNS query to its Internet Service Provider's (ISP's) Recursive DNS Server, asking for the IP address of "www.example.com."
 
-3. **Recursive Resolution**:
-   If the resolver doesn’t have the domain information cached, it performs a series of recursive queries:
-   - **Root Server**: The resolver first contacts a root DNS server (e.g., `.`). These servers provide pointers to **Top-Level Domain (TLD)** servers.
-   - **TLD Server**: For example, if the query is for `example.com`, the `.com` TLD server is queried. It responds with the authoritative name server for the domain.
-   - **Authoritative Name Server**: Finally, the resolver queries the authoritative name server for the domain, which returns the IP address for `example.com`.
+2. **ISP's Recursive DNS Server to Root DNS Server**  
+   If the recursive DNS server does not already know the answer, it queries the **Root DNS Server**. The Root DNS Server responds by directing the recursive server to the appropriate **Top-Level Domain (TLD) DNS Server** based on the domain suffix (in this case, `.com`).
 
-4. **Response to Client**:
-   - The resolver sends the IP address back to the user's device.
-   - The user's browser or application uses the IP address to establish a connection with the web server.
+3. **Root DNS Server Response**  
+   The Root DNS Server provides the address of the **.com TLD DNS Server** to the recursive DNS server.
+
+4. **Recursive DNS Server to TLD DNS Server**  
+   The recursive DNS server then queries the **TLD DNS Server** (responsible for `.com` domains) for the IP address of "www.example.com."
+
+5. **TLD DNS Server Response**  
+   The TLD DNS Server responds with the address of the **Authoritative DNS Server** for "www.example.com" (managed by the hosting provider or domain owner).
+
+6. **Recursive DNS Server to Authoritative DNS Server**  
+   The recursive DNS server queries the **Authoritative DNS Server** to get the IP address for "www.example.com."
+
+7. **Authoritative DNS Server Response**  
+   The Authoritative DNS Server responds with the IP address, e.g., `217.64.213.12`.
+
+8. **ISP's Recursive DNS Server to User Computer**  
+   Finally, the recursive DNS server sends the IP address (`217.64.213.12`) back to the user computer, allowing the user to access the website.
 
 ---
 
