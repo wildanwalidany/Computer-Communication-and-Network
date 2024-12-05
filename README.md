@@ -10,4 +10,4 @@ Here are my assignments for Computer Communication and Network course at EEPIS (
 
 ## Credit
 
-This project is based on resources from my lecturer [ferryastika](https://github.com/ferryastika)
+This project is inspired by resources provided by my lecturer [ferryastika](https://github.com/ferryastika)
