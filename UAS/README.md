@@ -23,6 +23,10 @@ The trace file for this test (`tcp-ethereal-trace-1`) was obtained from [Wiresha
    - **Client computer (source):**  
      - IP address: `192.168.1.102`  
      - TCP port number: `1161`  
+  
+      **Solution:**
+     
+      https://github.com/user-attachments/assets/a60b221a-b33b-45b3-b77c-17dc1588dc28
 
 ---
 
